@@ -14,6 +14,7 @@ export default class Container extends Component {
     y: PropTypes.number,
     width: PropTypes.number,
     height: PropTypes.number,
+    children: PropTypes.element,
   };
 
   render() {
@@ -26,7 +27,9 @@ export default class Container extends Component {
       }
     };
     return (
-      <div className={css(styles.general)} style={dStyles.rect}></div>
+      <div className={css(styles.general)} style={dStyles.rect}>
+        {this.props.children}
+      </div>
     );
   }
 }

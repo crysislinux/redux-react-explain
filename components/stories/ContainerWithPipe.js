@@ -2,6 +2,7 @@ import React from 'react';
 import { storiesOf } from '@kadira/storybook';
 import Container from '../Container';
 import Pipe from '../Pipe';
+import Step from '../Step';
 
 const rect1 = {
   x: 30,
@@ -27,8 +28,12 @@ const rect2 = {
 storiesOf('ContainerWithPipe', module)
   .add('normal', () => (
     <div>
-      <Container {...rect1} />
-      <Container {...rect2} />
+      <Container {...rect1}>
+        <Step title="Dispatch Begin" />
+      </Container>
+      <Container {...rect2}>
+        <Step title="Middleware" />
+      </Container>
       <Pipe {...points} />
     </div>
   ));
