@@ -55,73 +55,73 @@ export default class Pipe extends Component {
     this.draggingPoint = false;
   }
 
-  drawEndPoints(context, points) {
-    context.strokeStyle = 'blue';
-    context.fillStyle = 'red';
+  drawEndPoints(ctx, points) {
+    ctx.strokeStyle = 'blue';
+    ctx.fillStyle = 'red';
     points.forEach(p => {
-      context.beginPath();
-      context.arc(p.x, p.y, CONTROL_POINT_RADIUS, 0, Math.PI * 2, false);
-      context.stroke();
-      context.fill();
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, CONTROL_POINT_RADIUS, 0, Math.PI * 2, false);
+      ctx.stroke();
+      ctx.fill();
     });
   }
 
-  drawControlPoints(context, points) {
-    context.strokeStyle = 'yello';
-    context.fillStyle = 'blue';
+  drawControlPoints(ctx, points) {
+    ctx.strokeStyle = 'yello';
+    ctx.fillStyle = 'blue';
     points.forEach(p => {
-      context.beginPath();
-      context.arc(p.x, p.y, CONTROL_POINT_RADIUS, 0, Math.PI * 2, false);
-      context.stroke();
-      context.fill();
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, CONTROL_POINT_RADIUS, 0, Math.PI * 2, false);
+      ctx.stroke();
+      ctx.fill();
     });
   }
 
-  drawProgressPoint(context, point) {
-    context.strokeStyle = 'yello';
-    context.fillStyle = 'blue';
+  drawProgressPoint(ctx, point) {
+    ctx.strokeStyle = 'yello';
+    ctx.fillStyle = 'blue';
 
-    context.beginPath();
-    context.arc(point.x, point.y, CONTROL_POINT_RADIUS, 0, Math.PI * 2, false);
-    context.stroke();
-    context.fill();
+    ctx.beginPath();
+    ctx.arc(point.x, point.y, CONTROL_POINT_RADIUS, 0, Math.PI * 2, false);
+    ctx.stroke();
+    ctx.fill();
   }
 
-  drawBezierCurve(context, points) {
-    context.strokeStyle = 'green';
-    context.lineWidth = 1;
-    context.beginPath();
-    context.moveTo(points[0].x, points[0].y);
-    context.bezierCurveTo(points[1].x, points[1].y,
+  drawBezierCurve(ctx, points) {
+    ctx.strokeStyle = 'green';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(points[0].x, points[0].y);
+    ctx.bezierCurveTo(points[1].x, points[1].y,
       points[2].x, points[2].y, points[3].x, points[3].y);
-    context.stroke();
+    ctx.stroke();
   }
 
   reset() {
     this.canvas.width = this.canvas.width;
   }
 
-  draw(context) {
+  draw(ctx) {
     const points = this.points;
     const endPoints = [points[0], points[3]];
     const controlPoints = [points[1], points[2]];
-    this.drawBezierCurve(context, points);
-    this.drawControlPoints(context, controlPoints);
-    this.drawEndPoints(context, endPoints);
+    this.drawBezierCurve(ctx, points);
+    this.drawControlPoints(ctx, controlPoints);
+    this.drawEndPoints(ctx, endPoints);
     const progressPoint = this.curve.get(this.props.progress / 100);
-    this.drawProgressPoint(context, progressPoint);
+    this.drawProgressPoint(ctx, progressPoint);
   }
 
   componentDidMount() {
-    this.context = this.canvas.getContext('2d');
-    this.draw(this.context);
+    this.ctx = this.canvas.getContext('2d');
+    this.draw(this.ctx);
   }
 
   componentWillReceiveProps(props) {
     this.curve = new Bezier(resolvePoints(props.points));
     this.points = this.curve.points;
     this.reset();
-    this.draw(this.context);
+    this.draw(this.ctx);
   }
 
   render() {
