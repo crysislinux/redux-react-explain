@@ -34,6 +34,6 @@ storiesOf('ContainerWithPipe', module)
       <Container {...rect2}>
         <Step title="Middleware" />
       </Container>
-      <Pipe {...points} />
+      <Pipe {...points} progress={60} />
     </div>
   ));

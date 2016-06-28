@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import React, { Component, PropTypes } from 'react';
 import { StyleSheet, css } from 'aphrodite';
+import Bezier from 'bezier-js';
 
 const styles = StyleSheet.create({
   container: {
@@ -75,6 +76,16 @@ export default class Pipe extends Component {
     });
   }
 
+  drawProgressPoint(context, point) {
+    context.strokeStyle = 'yello';
+    context.fillStyle = 'blue';
+
+    context.beginPath();
+    context.arc(point.x, point.y, CONTROL_POINT_RADIUS, 0, Math.PI * 2, false);
+    context.stroke();
+    context.fill();
+  }
+
   drawBezierCurve(context, endPoints, controlPoints) {
     context.strokeStyle = 'green';
     context.lineWidth = 1;
@@ -85,6 +96,10 @@ export default class Pipe extends Component {
     context.stroke();
   }
 
+  reset() {
+    this.canvas.width = this.canvas.width;
+  }
+
   draw(context) {
     const points = resolvePoints(this.points);
     const endPoints = [points[0], points[1]];
@@ -92,10 +107,26 @@ export default class Pipe extends Component {
     this.drawControlPoints(context, controlPoints);
     this.drawEndPoints(context, endPoints);
     this.drawBezierCurve(context, endPoints, controlPoints);
+
+    const params = [
+      points[0].x, points[0].y,
+      points[2].x, points[2].y,
+      points[3].x, points[3].y,
+      points[1].x, points[1].y
+    ];
+    const curve = new Bezier(...params);
+    const progressPoint = curve.get(this.props.progress / 100);
+    this.drawProgressPoint(context, progressPoint);
   }
 
   componentDidMount() {
     this.context = this.canvas.getContext('2d');
+    this.draw(this.context);
+  }
+
+  componentWillReceiveProps(props) {
+    this.points = [props.start, props.end, props.controlA, props.controlB];
+    this.reset();
     this.draw(this.context);
   }
 
@@ -134,4 +165,5 @@ Pipe.propTypes = {
     x: PropTypes.number,
     y: PropTypes.number,
   }).isRequired,
+  progress: PropTypes.number.isRequired,
 };
