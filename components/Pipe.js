@@ -48,7 +48,8 @@ function resolvePoints(points) {
 export default class Pipe extends Component {
   constructor(props) {
     super(props);
-    this.points = [props.start, props.end, props.controlA, props.controlB];
+    this.curve = new Bezier(resolvePoints(props.points));
+    this.points = this.curve.points;
     this.mousedown = {};
     this.dragging = false;
     this.draggingPoint = false;
@@ -86,13 +87,13 @@ export default class Pipe extends Component {
     context.fill();
   }
 
-  drawBezierCurve(context, endPoints, controlPoints) {
+  drawBezierCurve(context, points) {
     context.strokeStyle = 'green';
     context.lineWidth = 1;
     context.beginPath();
-    context.moveTo(endPoints[0].x, endPoints[0].y);
-    context.bezierCurveTo(controlPoints[0].x, controlPoints[0].y,
-      controlPoints[1].x, controlPoints[1].y, endPoints[1].x, endPoints[1].y);
+    context.moveTo(points[0].x, points[0].y);
+    context.bezierCurveTo(points[1].x, points[1].y,
+      points[2].x, points[2].y, points[3].x, points[3].y);
     context.stroke();
   }
 
@@ -101,21 +102,13 @@ export default class Pipe extends Component {
   }
 
   draw(context) {
-    const points = resolvePoints(this.points);
-    const endPoints = [points[0], points[1]];
-    const controlPoints = [points[2], points[3]];
+    const points = this.points;
+    const endPoints = [points[0], points[3]];
+    const controlPoints = [points[1], points[2]];
+    this.drawBezierCurve(context, points);
     this.drawControlPoints(context, controlPoints);
     this.drawEndPoints(context, endPoints);
-    this.drawBezierCurve(context, endPoints, controlPoints);
-
-    const params = [
-      points[0].x, points[0].y,
-      points[2].x, points[2].y,
-      points[3].x, points[3].y,
-      points[1].x, points[1].y
-    ];
-    const curve = new Bezier(...params);
-    const progressPoint = curve.get(this.props.progress / 100);
+    const progressPoint = this.curve.get(this.props.progress / 100);
     this.drawProgressPoint(context, progressPoint);
   }
 
@@ -125,13 +118,14 @@ export default class Pipe extends Component {
   }
 
   componentWillReceiveProps(props) {
-    this.points = [props.start, props.end, props.controlA, props.controlB];
+    this.curve = new Bezier(resolvePoints(props.points));
+    this.points = this.curve.points;
     this.reset();
     this.draw(this.context);
   }
 
   render() {
-    const rect = resolveBoundingRect(this.points);
+    const rect = resolveBoundingRect(this.props.points);
     const dStyles = {
       rect: {
         left: rect.x,
@@ -149,21 +143,6 @@ export default class Pipe extends Component {
 }
 
 Pipe.propTypes = {
-  start: PropTypes.shape({
-    x: PropTypes.number,
-    y: PropTypes.number,
-  }).isRequired,
-  end: PropTypes.shape({
-    x: PropTypes.number,
-    y: PropTypes.number,
-  }).isRequired,
-  controlA: PropTypes.shape({
-    x: PropTypes.number,
-    y: PropTypes.number,
-  }).isRequired,
-  controlB: PropTypes.shape({
-    x: PropTypes.number,
-    y: PropTypes.number,
-  }).isRequired,
+  points: PropTypes.array.isRequired,
   progress: PropTypes.number.isRequired,
 };

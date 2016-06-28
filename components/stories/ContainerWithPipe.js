@@ -11,12 +11,12 @@ const rect1 = {
   height: 100,
 };
 
-const points = {
-  start: { x: 230, y: 90 },
-  end: { x: 300, y: 200 },
-  controlA: { x: 280, y: 100 },
-  controlB: { x: 250, y: 200 },
-};
+const points = [
+  { x: 230, y: 90 },
+  { x: 280, y: 100 },
+  { x: 250, y: 200 },
+  { x: 300, y: 200 },
+];
 
 const rect2 = {
   x: 300,
@@ -34,6 +34,6 @@ storiesOf('ContainerWithPipe', module)
       <Container {...rect2}>
         <Step title="Middleware" />
       </Container>
-      <Pipe {...points} progress={60} />
+      <Pipe points={points} progress={60} />
     </div>
   ));
