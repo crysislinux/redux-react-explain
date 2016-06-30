@@ -5,6 +5,7 @@ function loadStories() {
   require('../components/stories/Container');
   require('../components/stories/ContainerWithPipe');
   require('../components/stories/Step');
+  require('../components/stories/Toolbar');
   // require as many stories as you need.
 }
 
